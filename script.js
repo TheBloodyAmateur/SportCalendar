@@ -12,6 +12,13 @@ class Database{
         this.db = new sqlite3.Database("calendar.db");
     }
 
+    closeConnection(){
+        this.db.close((error) =>{
+            if(error)
+                console.error(error.message);
+        });
+    }
+
     addNewEvent(weekday, date, sport_type, teams, location){
         this.db.run(`INSERT INTO events VALUES('${weekday}','${date}','${sport_type}','${teams}','${location}')`);
     }
@@ -46,45 +53,38 @@ class Database{
     }
 }
 
-let database = new Database();
-database.sortEvents("weekday");
+//let database = new Database();
 
 function addEventToTable(){
+
+    let database = new Database();
 
     const cell = [];
     const column = [];
 
-    column[0] = document.getElementById("weekday").value;
-    column[1] = document.getElementById("date").value;
-    column[2] = document.getElementById("sport").value;
-    column[3] = document.getElementById("Teams").value;
-    column[4] = document.getElementById("Location").value;
+    var weekday = document.getElementById("weekday").value;
+    var date = document.getElementById("date").value;
+    var sport = document.getElementById("sport").value;
+    var teams = document.getElementById("Teams").value;
+    var location = document.getElementById("location").value;
+
+    database.addNewEvent(weekday,date,sport,teams,location);
 
     var table = document.getElementsByTagName('table')[0];
-
     var newRow = table.insertRow(table.rows.length);
 
     // add cells to the row
-    for(let i = 0; i < 4; i++){
-        cell[i] = newRow.insertCell(i);
-    }
-
-    // add values to the cells
-    for(let i = 0; i < 4; i++)
-    {
-        cell[i].innerHTML  = column(i);
-    }
-
-    /*var cel1 = newRow.insertCell(0);
+    var cel1 = newRow.insertCell(0);
     var cel2 = newRow.insertCell(1);
     var cel3 = newRow.insertCell(2);
     var cel4 = newRow.insertCell(3);
     var cel5 = newRow.insertCell(4);
-
     // add values to the cells
     cel1.innerHTML = weekday;
     cel2.innerHTML = date;
     cel3.innerHTML = sport;
-    cel4.innerHTML = Teams;
-    cel5.innerHTML = Location;*/
+    cel4.innerHTML = teams;
+    cel5.innerHTML = location;
+
+    database.closeConnection();
 }

@@ -2,51 +2,80 @@
 <html>
 <head>
     <title>Sportradar</title>
-    <script src="script.js"></script>
+    <meta charset="UTF-8">
+    <script>
+        function addEventToTable(){
+
+          var weekday = document.getElementById("weekday").value;
+          var date = document.getElementById("date").value;
+          var sport = document.getElementById("sport").value;
+          var teams = document.getElementById("Teams").value;
+          var location = document.getElementById("location").value;
+
+          database.addNewEvent(weekday,date,sport,teams,location);
+
+          var table = document.getElementsByTagName('table')[0];
+          var newRow = table.insertRow(table.rows.length);
+
+          // add cells to the row
+          var cel1 = newRow.insertCell(0);
+          var cel2 = newRow.insertCell(1);
+          var cel3 = newRow.insertCell(2);
+          var cel4 = newRow.insertCell(3);
+          var cel5 = newRow.insertCell(4);
+          // add values to the cells
+          cel1.innerHTML = weekday;
+          cel2.innerHTML = date;
+          cel3.innerHTML = sport;
+          cel4.innerHTML = teams;
+          cel5.innerHTML = location;
+
+          }
+    </script>
     <style>
-            table {
-              font-family: arial, sans-serif;
-              border-collapse: collapse;
-              width: 100%;
-            }
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
 
-            td, th {
-              border: 1px solid #dddddd;
-              text-align: left;
-              padding: 8px;
-            }
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
 
-            tr:nth-child(even) {
-              background-color: #dddddd;
-            }
-            </style>
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+    </style>
 </head>
 <body>
-<h1 style="size: 40px;">Sportradar</h1>
-<p>Sort by</p>
-<select>
-    <option value="weekDay">Week day</option>
-    <option value="date">Date</option>
-    <option value="sport">Sport</option>
-    <option value="teams">Teams</option>
-    <option value="location">Location</option>
-</select>
-<div id="data">
-    <input type="text" id="weekday" placeholder="Weekday">
-    <input type="text" id="date" placeholder="Date">
-    <input type="text" id="sport" placeholder="sport">
-    <input type="text" id="Teams" placeholder="Teams">
-    <input type="text" id="Location" placeholder="Location">
-    <button onclick="addEventToTable();">Add Event</button><br/><br/>
-</div>
-<table border="1">
-    <tr>
-        <th>Week Day</th>
-        <th>date</th>
-        <th>sport</th>
-        <th>Teams</th>
-        <th>Country</th>
-    </tr>
-</table>
+  <h1 style="size: 40px;">Sportradar</h1>
+  <p>Sort by</p>
+  <select>
+      <option value="weekDay">Week day</option>
+      <option value="date">Date</option>
+      <option value="sport">Sport</option>
+      <option value="teams">Teams</option>
+      <option value="location">Location</option>
+  </select>
+  <div id="data">
+      <input type="text" id="weekday" placeholder="Weekday">
+      <input type="text" id="date" placeholder="Date">
+      <input type="text" id="sport" placeholder="sport">
+      <input type="text" id="Teams" placeholder="Teams">
+      <input type="text" id="location" placeholder="Location">
+      <button onclick="addEventToTable();">Add Event</button><br/><br/>
+  </div>
+  <table border="1">
+      <tr>
+          <th>Week Day</th>
+          <th>date</th>
+          <th>sport</th>
+          <th>Teams</th>
+          <th>Country</th>
+      </tr>
+  </table>
 </body>
 </html>
