@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sportradar</title>
+    <script src="script.js"></script>
+    <style>
+            table {
+              font-family: arial, sans-serif;
+              border-collapse: collapse;
+              width: 100%;
+            }
+
+            td, th {
+              border: 1px solid #dddddd;
+              text-align: left;
+              padding: 8px;
+            }
+
+            tr:nth-child(even) {
+              background-color: #dddddd;
+            }
+            </style>
+</head>
+<body>
+<h1 style="size: 40px;">Sportradar</h1>
+<p>Sort by</p>
+<select>
+    <option value="weekDay">Week day</option>
+    <option value="date">Date</option>
+    <option value="sport">Sport</option>
+    <option value="teams">Teams</option>
+    <option value="location">Location</option>
+</select>
+<div id="data">
+    <input type="text" id="weekday" placeholder="Weekday">
+    <input type="text" id="date" placeholder="Date">
+    <input type="text" id="sport" placeholder="sport">
+    <input type="text" id="Teams" placeholder="Teams">
+    <input type="text" id="Location" placeholder="Location">
+    <button onclick="addEventToTable();">Add Event</button><br/><br/>
+</div>
+<table border="1">
+    <tr>
+        <th>Week Day</th>
+        <th>date</th>
+        <th>sport</th>
+        <th>Teams</th>
+        <th>Country</th>
+    </tr>
+</table>
+</body>
+</html>
