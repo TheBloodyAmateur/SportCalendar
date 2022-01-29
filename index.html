@@ -4,33 +4,64 @@
     <title>Sportradar</title>
     <meta charset="UTF-8">
     <script>
-        function addEventToTable(){
+      
+      let dataSend = [];
 
-          var weekday = document.getElementById("weekday").value;
-          var date = document.getElementById("date").value;
-          var sport = document.getElementById("sport").value;
-          var teams = document.getElementById("Teams").value;
-          var location = document.getElementById("location").value;
+      const ws = new WebSocket("ws://localhost:8080");
 
-          database.addNewEvent(weekday,date,sport,teams,location);
+      ws.addEventListener("open", () => {
+          console.log("Connection established!");
+      });
+      ws.addEventListener("message", function(event){
+          console.log('Message from server: ' + event.data);
+      });
+      ws.onmessage = function(e){
+          var server_message = e.data;
+          console.log(server_message);
+      }
 
-          var table = document.getElementsByTagName('table')[0];
-          var newRow = table.insertRow(table.rows.length);
+      function addNewEvent()
+      {
+        const value = [];
+        const cell = [];
 
-          // add cells to the row
-          var cel1 = newRow.insertCell(0);
-          var cel2 = newRow.insertCell(1);
-          var cel3 = newRow.insertCell(2);
-          var cel4 = newRow.insertCell(3);
-          var cel5 = newRow.insertCell(4);
-          // add values to the cells
-          cel1.innerHTML = weekday;
-          cel2.innerHTML = date;
-          cel3.innerHTML = sport;
-          cel4.innerHTML = teams;
-          cel5.innerHTML = location;
+        var table = document.getElementsByTagName('table')[0];
+        var newRow = table.insertRow(table.rows.length);
 
-          }
+        value[0] = document.getElementById("weekday").value;
+        value[1] = document.getElementById("date").value;
+        value[2] = document.getElementById("sport").value;
+        value[3] = document.getElementById("Teams").value;
+        value[4] = document.getElementById("location").value;
+
+        ws.send(JSON.stringify([value[0], value[1], value[2], value[3], value[4]]));
+      
+        //Create new rows 
+        for(let i = 0; i < value.length; i++)
+        {
+          cell[i] = newRow.insertCell(i);
+        }
+
+        //Assign values to the new rows
+        for(let i = 0; i < value.length; i++)
+        {
+          cell[i].innerHTML = value[i];
+        }
+      }
+
+      function sortBy(){
+        //Send the column by which the data should be sorted
+        var selectValue = document.getElementById("sortMenu").value;
+        ws.send(JSON.stringify([selectValue]));
+
+        const cell = [];
+
+        var table = document.getElementsByTagName('table')[0];
+        var newRow = table.insertRow(table.rows.length);
+
+
+      }
+
     </script>
     <style>
       table {
@@ -52,23 +83,25 @@
 </head>
 <body>
   <h1 style="size: 40px;">Sportradar</h1>
-  <p>Sort by</p>
-  <select>
-      <option value="weekDay">Week day</option>
-      <option value="date">Date</option>
-      <option value="sport">Sport</option>
-      <option value="teams">Teams</option>
-      <option value="location">Location</option>
-  </select>
+  <div>
+    <select id="sortMenu">
+        <option value="weekday">Week day</option>
+        <option value="date_time">Date</option>
+        <option value="sport_type">Sport</option>
+        <option value="teams">Teams</option>
+        <option value="location">Location</option>
+    </select>
+    <button onclick="sortBy();">Load Events</button><br/><br/>
+  </div>
   <div id="data">
       <input type="text" id="weekday" placeholder="Weekday">
       <input type="text" id="date" placeholder="Date">
       <input type="text" id="sport" placeholder="sport">
       <input type="text" id="Teams" placeholder="Teams">
       <input type="text" id="location" placeholder="Location">
-      <button onclick="addEventToTable();">Add Event</button><br/><br/>
+      <button onclick="addNewEvent();">Add Event</button><br/><br/>
   </div>
-  <table border="1">
+  <table>
       <tr>
           <th>Week Day</th>
           <th>date</th>
