@@ -6,8 +6,6 @@
     <script>
       
       let dataSend = [];
-      let firsTime = true;
-
       function addNewRow(weekday, date_time, sport_type, teams, location){
         const cell = [];
         
@@ -28,6 +26,10 @@
       }
 
       function printData(buffer){
+        /*
+        * Before the new data can be displayed the old
+        * events are deleted. 
+        */
         var table = document.getElementsByTagName('table')[0];
 
         while(table.rows.length > 1){
@@ -36,7 +38,6 @@
 
         const cell = [];
         var i = 0, j = 0;
-        //var table = document.getElementsByTagName('table')[0];
         console.log("Buffer length: " +buffer.length);
 
         for(let i = 0; i < buffer.length;i+=5){
@@ -51,13 +52,8 @@
       });
       ws.addEventListener("message", function(event){
           var data = JSON.parse(event.data);
-          console.log('Message from server: ' + data);
           printData(data);
       });
-      ws.onmessage = function(e){
-          //console.log(e.data);
-          //printData(e.data);
-      }
 
       function addNewEvent()
       {
@@ -92,13 +88,6 @@
         //Send the column by which the data should be sorted
         var selectValue = document.getElementById("sortMenu").value;
         ws.send(JSON.stringify([selectValue]));
-
-        if(firsTime)
-        {
-          firsTime = false;
-          sortBy();
-        }
-        //ws.send(JSON.stringify([selectValue]));
       }
 
     </script>
@@ -146,7 +135,7 @@
           <th>date</th>
           <th>sport</th>
           <th>Teams</th>
-          <th>Country</th>
+          <th>Location</th>
       </tr>
   </table>
 </body>
