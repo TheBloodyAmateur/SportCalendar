@@ -13,8 +13,7 @@
         var newRow = table.insertRow(table.rows.length);
         
         //Create new cells 
-        for(let i = 0; i < 5; i++)
-        {
+        for(let i = 0; i < 5; i++){
           cell[i] = newRow.insertCell(i);
         }
 
@@ -55,8 +54,7 @@
           printData(data);
       });
 
-      function addNewEvent()
-      {
+      function addNewEvent(){
         const value = [];
         const cell = [];
 
@@ -72,14 +70,12 @@
         ws.send(JSON.stringify([value[0], value[1], value[2], value[3], value[4]]));
       
         //Create new cells 
-        for(let i = 0; i < value.length; i++)
-        {
+        for(let i = 0; i < value.length; i++){
           cell[i] = newRow.insertCell(i);
         }
 
         //Assign values to the new rows
-        for(let i = 0; i < value.length; i++)
-        {
+        for(let i = 0; i < value.length; i++){
           cell[i].innerHTML = value[i];
         }
       }
