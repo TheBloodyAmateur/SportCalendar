@@ -8,6 +8,7 @@
 ## Prerquisites
 
 * Node >= v.16.13.2
+* Linux OS 
 
 ## Usage
 
@@ -16,7 +17,13 @@
 ```
 node server.js
 ```
-> To run the client the index.html file must be executed. 
+> To run the client the index.html file must be executed.
+
+<p align="center">
+  <img src="start.png"/>
+</p>
+
+As soon as the client is connected to the server the sport events can be displayed by clicking on the 'Load Events' - button.
 
 ## Author
 

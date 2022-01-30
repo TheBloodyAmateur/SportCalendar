@@ -6,22 +6,23 @@
     <script>
       
       let dataSend = [];
-      function addNewRow(weekday, date_time, sport_type, teams, location){
+      function addNewRow(weekday, date, time, sport_type, teams, location){
         const cell = [];
         
         var table = document.getElementsByTagName('table')[0];
         var newRow = table.insertRow(table.rows.length);
         
         //Create new cells 
-        for(let i = 0; i < 5; i++){
+        for(let i = 0; i < 6; i++){
           cell[i] = newRow.insertCell(i);
         }
 
         cell[0].innerHTML = weekday;
-        cell[1].innerHTML = date_time;
-        cell[2].innerHTML = sport_type;
-        cell[3].innerHTML = teams;
-        cell[4].innerHTML = location;
+        cell[1].innerHTML = date;
+        cell[2].innerHTML = time;
+        cell[3].innerHTML = sport_type;
+        cell[4].innerHTML = teams;
+        cell[5].innerHTML = location;
       }
 
       function printData(buffer){
@@ -39,8 +40,8 @@
         var i = 0, j = 0;
         console.log("Buffer length: " +buffer.length);
 
-        for(let i = 0; i < buffer.length;i+=5){
-          addNewRow(buffer[i],buffer[i+1],buffer[i+2],buffer[i+3],buffer[i+4])
+        for(let i = 0; i < buffer.length;i+=6){
+          addNewRow(buffer[i],buffer[i+1],buffer[i+2],buffer[i+3],buffer[i+4], buffer[i+5]);
         }
       }
 
@@ -63,11 +64,12 @@
 
         value[0] = document.getElementById("weekday").value;
         value[1] = document.getElementById("date").value;
-        value[2] = document.getElementById("sport").value;
-        value[3] = document.getElementById("Teams").value;
-        value[4] = document.getElementById("location").value;
+        value[2] = document.getElementById("time").value;
+        value[3] = document.getElementById("sport").value;
+        value[4] = document.getElementById("Teams").value;
+        value[5] = document.getElementById("location").value;
 
-        ws.send(JSON.stringify([value[0], value[1], value[2], value[3], value[4]]));
+        ws.send(JSON.stringify([value[0], value[1], value[2], value[3], value[4], value[5]]));
       
         //Create new cells 
         for(let i = 0; i < value.length; i++){
@@ -108,9 +110,11 @@
 <body>
   <h1 style="size: 40px;">Sportradar</h1>
   <div>
+    <p>Sort by</p>
     <select id="sortMenu">
         <option value="weekday">Week day</option>
-        <option value="date_time">Date</option>
+        <option value="date">Date</option>
+        <option value="time">Time</option>
         <option value="sport_type">Sport</option>
         <option value="teams">Teams</option>
         <option value="location">Location</option>
@@ -120,6 +124,7 @@
   <div id="data">
       <input type="text" id="weekday" placeholder="Weekday">
       <input type="text" id="date" placeholder="Date">
+      <input type="text" id="time" placeholder="Time">
       <input type="text" id="sport" placeholder="sport">
       <input type="text" id="Teams" placeholder="Teams">
       <input type="text" id="location" placeholder="Location">
@@ -129,6 +134,7 @@
       <tr>
           <th>Week Day</th>
           <th>date</th>
+          <th>time</th>
           <th>sport</th>
           <th>Teams</th>
           <th>Location</th>

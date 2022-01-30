@@ -4,7 +4,7 @@
 * Based on the examples the database will have a single table with the
 * following columns:
 * 
-* weekday / date_time / sport_type / teams / location
+* weekday / date / time / sport_type / teams / location
 * */
 let sendBuffer = []
 
@@ -14,8 +14,8 @@ class Database{
     }
 
     //Adds a new entry to the database.
-    addNewEvent(weekday, date_time, sport_type, teams, location){
-        const stmt = this.db.prepare(`INSERT INTO events VALUES('${weekday}','${date_time}','${sport_type}','${teams}','${location}')`);
+    addNewEvent(weekday, date, time, sport_type, teams, location){
+        const stmt = this.db.prepare(`INSERT INTO events VALUES('${weekday}','${date}', '${time}', '${sport_type}','${teams}','${location}')`);
         stmt.run();
     }
 
@@ -34,7 +34,7 @@ class Database{
             for(let i = 0; i < weekDays.length; i++){
                 for(let j = 0; j < rows.length; j++){
                     if(`${rows[j].weekday}` == weekDays[i]){
-                        sendBuffer.push(rows[j].weekday,rows[j].date_time,rows[j].sport_type,rows[j].teams,rows[j].location);
+                        sendBuffer.push(rows[j].weekday, rows[j].date, rows[j].time,rows[j].sport_type,rows[j].teams,rows[j].location);
                     }
                 }    
             }
@@ -43,19 +43,19 @@ class Database{
         * So that the latest entrys are displayed at the top the data is pulled from the
         * database by descending order.
         */
-        else if(column == "date_time"){
-            const stmt = this.db.prepare(`SELECT * FROM events ORDER BY date_time DESC`);
+        else if(column == "date" || column == "time"){
+            const stmt = this.db.prepare(`SELECT * FROM events ORDER BY ${column} DESC`);
             const rows = stmt.all();
 
             for(let i = 0; i < rows.length; i++){
-                sendBuffer.push(rows[i].weekday,rows[i].date_time,rows[i].sport_type,rows[i].teams,rows[i].location);
+                sendBuffer.push(rows[i].weekday, rows[i].date, rows[i].time, rows[i].sport_type,rows[i].teams,rows[i].location);
             }
         }else{
             const stmt = this.db.prepare(`SELECT * FROM events ORDER BY ${column}`);
             const rows = stmt.all();
 
             for(let i = 0; i < rows.length; i++){
-                sendBuffer.push(rows[i].weekday,rows[i].date_time,rows[i].sport_type,rows[i].teams,rows[i].location);
+                sendBuffer.push(rows[i].weekday, rows[i].date, rows[i].time,rows[i].sport_type,rows[i].teams,rows[i].location);
             }
         }
     }
@@ -78,8 +78,9 @@ server.on('connection', socket => {
         * When the server recieves five strings it adds them as a new event to the server
         * sorts them by weekday and sends them back to the user.
         */
-        if(buffer.length == 5){
-            database.addNewEvent(buffer[0],buffer[1],buffer[2],buffer[3],buffer[4]);
+       console.log(buffer.length);
+        if(buffer.length == 6){
+            database.addNewEvent(buffer[0],buffer[1],buffer[2],buffer[3],buffer[4],buffer[5]);
             database.sortEvents("weekday");
             socket.send(JSON.stringify(sendBuffer));    
         }else{
