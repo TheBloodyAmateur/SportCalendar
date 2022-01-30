@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <script>
       
-      let dataSend = [];
       function addNewRow(weekday, date, time, sport_type, teams, location){
         const cell = [];
         
@@ -45,11 +44,13 @@
         }
       }
 
+      //The client creates a connection to the server
       const ws = new WebSocket("ws://localhost:8080");
 
       ws.addEventListener("open", () => {
           console.log("Connection established!");
       });
+      //Parses the data from the server and displays them
       ws.addEventListener("message", function(event){
           var data = JSON.parse(event.data);
           printData(data);
@@ -69,17 +70,8 @@
         value[4] = document.getElementById("Teams").value;
         value[5] = document.getElementById("location").value;
 
+        //Sends the values to the server
         ws.send(JSON.stringify([value[0], value[1], value[2], value[3], value[4], value[5]]));
-      
-        //Create new cells 
-        for(let i = 0; i < value.length; i++){
-          cell[i] = newRow.insertCell(i);
-        }
-
-        //Assign values to the new rows
-        for(let i = 0; i < value.length; i++){
-          cell[i].innerHTML = value[i];
-        }
       }
 
       function sortBy(){

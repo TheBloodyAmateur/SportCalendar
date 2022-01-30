@@ -23,7 +23,7 @@ node server.js
   <img src="start.png"/>
 </p>
 
-As soon as the client is connected to the server the sport events can be displayed by clicking on the 'Load Events' - button.
+As soon as the client is connected to the server the sport events can be displayed by clicking on the 'Load Events' - button. Whenever the user wants to sort the events by any column he can use the dropdown menu next to the button.
 
 ## Author
 

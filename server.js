@@ -40,8 +40,8 @@ class Database{
             }
         }
         /*
-        * So that the latest entrys are displayed at the top the data is pulled from the
-        * database by descending order.
+        * So that the events that are furthest in the future are displayed at 
+        * the top the data is pulled from the database by descending order.
         */
         else if(column == "date" || column == "time"){
             const stmt = this.db.prepare(`SELECT * FROM events ORDER BY ${column} DESC`);
@@ -75,10 +75,9 @@ server.on('connection', socket => {
     socket.on('message', message => {
         var buffer = JSON.parse(message);
         /*
-        * When the server recieves five strings it adds them as a new event to the server
+        * When the server recieves six strings it adds them as a new event to the server
         * sorts them by weekday and sends them back to the user.
         */
-       console.log(buffer.length);
         if(buffer.length == 6){
             database.addNewEvent(buffer[0],buffer[1],buffer[2],buffer[3],buffer[4],buffer[5]);
             database.sortEvents("weekday");
