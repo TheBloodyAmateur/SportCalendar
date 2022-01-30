@@ -5,11 +5,18 @@
 
 > A website which hosts a calendar with fictional sport events, pulled by a server.
 
-## Install
+## Prerquisites
 
-```sh
-npm install
+* Node >= v.16.13.2
+
+## Usage
+
+* Running the server
+
 ```
+node server.js
+```
+> To run the client the index.html file must be executed. 
 
 ## Author
 
