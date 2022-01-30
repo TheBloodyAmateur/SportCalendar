@@ -6,6 +6,43 @@
     <script>
       
       let dataSend = [];
+      let firsTime = true;
+
+      function addNewRow(weekday, date_time, sport_type, teams, location){
+        const cell = [];
+        
+        var table = document.getElementsByTagName('table')[0];
+        var newRow = table.insertRow(table.rows.length);
+        
+        //Create new cells 
+        for(let i = 0; i < 5; i++)
+        {
+          cell[i] = newRow.insertCell(i);
+        }
+
+        cell[0].innerHTML = weekday;
+        cell[1].innerHTML = date_time;
+        cell[2].innerHTML = sport_type;
+        cell[3].innerHTML = teams;
+        cell[4].innerHTML = location;
+      }
+
+      function printData(buffer){
+        var table = document.getElementsByTagName('table')[0];
+
+        while(table.rows.length > 1){
+          table.deleteRow(1);
+        }
+
+        const cell = [];
+        var i = 0, j = 0;
+        //var table = document.getElementsByTagName('table')[0];
+        console.log("Buffer length: " +buffer.length);
+
+        for(let i = 0; i < buffer.length;i+=5){
+          addNewRow(buffer[i],buffer[i+1],buffer[i+2],buffer[i+3],buffer[i+4])
+        }
+      }
 
       const ws = new WebSocket("ws://localhost:8080");
 
@@ -13,11 +50,13 @@
           console.log("Connection established!");
       });
       ws.addEventListener("message", function(event){
-          console.log('Message from server: ' + event.data);
+          var data = JSON.parse(event.data);
+          console.log('Message from server: ' + data);
+          printData(data);
       });
       ws.onmessage = function(e){
-          var server_message = e.data;
-          console.log(server_message);
+          //console.log(e.data);
+          //printData(e.data);
       }
 
       function addNewEvent()
@@ -36,7 +75,7 @@
 
         ws.send(JSON.stringify([value[0], value[1], value[2], value[3], value[4]]));
       
-        //Create new rows 
+        //Create new cells 
         for(let i = 0; i < value.length; i++)
         {
           cell[i] = newRow.insertCell(i);
@@ -54,12 +93,12 @@
         var selectValue = document.getElementById("sortMenu").value;
         ws.send(JSON.stringify([selectValue]));
 
-        const cell = [];
-
-        var table = document.getElementsByTagName('table')[0];
-        var newRow = table.insertRow(table.rows.length);
-
-
+        if(firsTime)
+        {
+          firsTime = false;
+          sortBy();
+        }
+        //ws.send(JSON.stringify([selectValue]));
       }
 
     </script>

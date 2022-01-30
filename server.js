@@ -1,67 +1,54 @@
-/*
-*   Database:
-*
-*   Based on the examples the database will have a single table with the
-*   following columns:
-*
-*   weekday / date_time / sport_type / teams / location
-* */
+let sendBuffer = []
+
 class Database{
     constructor(){
-        const sqlite3 = require('sqlite3').verbose();
-        this.db = new sqlite3.Database("calendar.db");
+        this.db = require('better-sqlite3')('calendar.db');
     }
 
-    closeConnection(){
-        this.db.close((error) =>{
-            if(error)
-                console.error(error.message);
-        });
-    }
-
-    addNewEvent(weekday, date, sport_type, teams, location){
-        this.db.run(`INSERT INTO events VALUES('${weekday}','${date}','${sport_type}','${teams}','${location}')`);
+    addNewEvent(weekday, date_time, sport_type, teams, location){
+        const stmt = this.db.prepare(`INSERT INTO events VALUES('${weekday}','${date_time}','${sport_type}','${teams}','${location}')`);
+        stmt.run();
     }
 
     sortEvents(column){
-        if(column == "weekday")
-            this.sortEventbyWeekDay();
-        else if(column == "date_time")
-            this.db.each(`SELECT * FROM events ORDER BY ${column} DESC`, (error, row) =>{
-                if(error)
-                    console.log(error.message);
-                else
-                    console.log(`${row.weekday} - ${row.date_time} - ${row.sport_type} - ${row.teams} - ${row.location}`);
-            });
-        else
-            this.db.each(`SELECT * FROM events ORDER BY ${column}`, (error, row) =>{
-                if(error)
-                    console.log(error.message);
-                else
-                    console.log(`${row.weekday} - ${row.date_time} - ${row.sport_type} - ${row.teams} - ${row.location}`);
-            });
-    }
+        if(column == "weekday"){
+            const weekDays = ["Monday", "Tuesday", "Wednsday","Thursday","Friday","Saturday","Sunday"];
 
-    sortEventbyWeekDay(){
-        const weekDays = ["Monday", "Tuesday", "Wednsday","Thursday","Friday","Saturday","Sunday"];
-        const data = [];
-        
-        //Bubblesort algorithm
-        for(let i = 0; i < weekDays.length; i++){
-                this.db.each(`SELECT * FROM events ORDER BY weekday`,
-                (error, row)=>{
-                    if(error)
-                        console.log(error.message);
-                    else
-                        if(`${row.weekday}` == weekDays[i])
-                            console.log(`${row.weekday} - ${row.date_time} - ${row.sport_type} - ${row.teams} - ${row.location}`);
-                });
+            const stmt = this.db.prepare(`SELECT * FROM events ORDER BY weekday`);
+            const rows = stmt.all();
+
+            for(let i = 0; i < weekDays.length; i++){
+                for(let j = 0; j < rows.length; j++){
+                    if(`${rows[j].weekday}` == weekDays[i]){
+                        sendBuffer.push(rows[j].weekday,rows[j].date_time,rows[j].sport_type,rows[j].teams,rows[j].location);
+                    }
+                }    
+            }
+        }
+        else if(column == "date_time"){
+            const stmt = this.db.prepare(`SELECT * FROM events ORDER BY date_time DESC`);
+            const rows = stmt.all();
+
+            for(let i = 0; i < rows.length; i++)
+            {
+                //console.log(`${rows[i].weekday} - ${rows[i].date_time} - ${rows[i].sport_type} - ${rows[i].teams} - ${rows[i].location}`);
+                sendBuffer.push(rows[i].weekday,rows[i].date_time,rows[i].sport_type,rows[i].teams,rows[i].location);
+            }
+        }else{
+            const stmt = this.db.prepare(`SELECT * FROM events ORDER BY ${column}`);
+            const rows = stmt.all();
+
+            for(let i = 0; i < rows.length; i++)
+            {
+                sendBuffer.push(rows[i].weekday,rows[i].date_time,rows[i].sport_type,rows[i].teams,rows[i].location);
+            }
         }
     }
 }
 
 let database = new Database();
-//database.sortEvents("location");
+database.sortEvents("weekday");
+//console.log(sendBuffer.length);
 
 const WebSocket = require('ws');
 const server = new WebSocket.Server({port:'8080'})
@@ -73,11 +60,15 @@ server.on('connection', socket => {
     //Recieving data from the client
     socket.on('message', message => {
         var buffer = JSON.parse(message);
-        console.log(`Recieved array: ${buffer}`);
-        if(buffer.length == 5)
-            database.addNewEvent(buffer[0], buffer[1], buffer[2], buffer[3], buffer[4]);
-        else
+        if(buffer.length == 5){
+            database.addNewEvent(buffer[0],buffer[1],buffer[2],buffer[3],buffer[4]);
+            database.sortEvents("weekday");    
+        }else{
             database.sortEvents(buffer[0]);
+            //console.log("SendBuffer: "+sendBuffer);
+            socket.send(JSON.stringify(sendBuffer));
+        }
+        sendBuffer = [];
     });
 
     //Message pops up when the client is closing the connection
